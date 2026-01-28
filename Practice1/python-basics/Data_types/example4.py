@@ -1,0 +1,1 @@
+x = set(("apple", "banana", "cherry"))
