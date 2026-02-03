@@ -12,4 +12,3 @@ if b > a:
 else:
   print("b is not greater than a")
 
-#Ex3
