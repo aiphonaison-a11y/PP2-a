@@ -12,3 +12,6 @@ if b > a:
 else:
   print("b is not greater than a")
 
+#Ex3
+x = 200
+print(isinstance(x, int))
