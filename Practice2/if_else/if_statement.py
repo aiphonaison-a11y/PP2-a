@@ -16,8 +16,7 @@ if age >= 18:
   print("You can vote")
   print("You have full legal rights")
 
-#Ex3
+#Ex4
 is_logged_in = True
 if is_logged_in:
   print("Welcome back!")
-
