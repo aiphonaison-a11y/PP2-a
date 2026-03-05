@@ -27,10 +27,13 @@ print(re.findall(r"[A-Z][a-z]+", text))
 
 #5.Python program that matches a string that has an 'a' followed by anything, ending in 'b'.
 import re
-text = "axyzb"
-pattern = r"a.*b"
+text = "axyzbc"
+pattern = r"^a.*b$"
 if re.search(pattern, text):
     print("Match")
+else:
+    print("No Match")
+
 
 #6.Python program to replace all occurrences of space, comma, or dot with a colon.
 import re

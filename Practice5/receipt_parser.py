@@ -3,11 +3,15 @@ with open("Practice5/raw.txt", "r") as file:
     text = file.read()
 
 #1.Extract all prices from the receipt
-prices_receipt = r"\b\d+(?: \d{3})*,\d{2}\b"
-prices = re.findall(prices_receipt, text)
-print("Prices:")
-for p in prices:
-    print(p)
+import re
+pattern = r"(\d+,\d+)\s*x\s*([\d ]+,\d{2})"
+matches = re.findall(pattern, text)
+print("Receipt rows:")
+for quantity, price in matches:
+    q = float(quantity.replace(",", "."))
+    p = float(price.replace(" ", "").replace(",", "."))
+    total_price = q * p
+    print(f"{total_price:.2f}")
 
 #2.Find all product names
 product_receipt = r"^\s*\d+\.\s*\n(.+)$"
@@ -19,7 +23,6 @@ for p in products:
 
 #3.Calculate total amount
 total_receipt = r"ИТОГО:\s*\n([\d ]+,\d{2})"
-
 total = re.search(total_receipt, text)
 
 if total:
@@ -47,7 +50,7 @@ if payment_match:
 #6.Create a structured output (JSON or formatted text)
 receipt_data = {
     "products": products,
-    "prices": prices,
+    "prices": total_price,
     "total": total,
     "date": date,
     "time": time,
@@ -55,4 +58,12 @@ receipt_data = {
 }
 
 print("\nStructured receipt data:")
-print(receipt_data)
+
+for key, value in receipt_data.items():
+    print(f"\n{key}:")
+    
+    if isinstance(value, list):
+        for v in value:
+            print(v)
+    else:
+        print(value)
