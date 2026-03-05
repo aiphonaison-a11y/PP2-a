@@ -13,6 +13,8 @@ Practice3 — Functions & Object-Oriented Programming
 
 Practice4 — Advanced Python Topics
 
+Practice5 - Python Regular Expressions (RegEx)
+
 ## Goal
 ### The purpose of this repository is to:
 Build a strong foundation in Python
@@ -22,3 +24,5 @@ Practice programming logic
 Understand object-oriented principles
 
 Improve problem-solving skills
+
+Mastering regular expressions in Python. 
