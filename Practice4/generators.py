@@ -1,60 +1,97 @@
+# generators.py
 
-# 1. Using iter() and next()
-
-numbers = [10, 20, 30]
-iterator = iter(numbers)
-
-print("Using iter() and next():")
-print(next(iterator))
-print(next(iterator))
-print(next(iterator))
-
+# This function creates a generator.
+# It gives the square of each number from 0 up to n.
+def square_generator(n):
+    # range(n + 1) means numbers from 0 to n inclusive
+    for i in range(n + 1):
+        # yield sends one value at a time
+        yield i * i
 
 
-# 2. Custom Iterator Class
+# Print a title so the output is easier to read
+print("1. Squares up to N:")
 
-class CountUpTo:
-    def __init__(self, limit):
-        self.limit = limit
-        self.current = 1
+# Store a sample number in n1
+n1 = 5
 
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        if self.current <= self.limit:
-            value = self.current
-            self.current += 1
-            return value
-        else:
-            raise StopIteration
+# Loop through the generator values
+for value in square_generator(n1):
+    print(value)
 
 
-print("\nCustom Iterator:")
-counter = CountUpTo(5)
-for number in counter:
-    print(number)
-
-
-
-
-# 3. Generator Function
-
+# This function generates even numbers from 0 to n
 def even_numbers(n):
+    # Start from 0, go to n, step by 2
     for i in range(0, n + 1, 2):
         yield i
 
 
-print("\nGenerator Function (even numbers):")
-for num in even_numbers(10):
+# Print a title
+print("\n2. Even numbers from 0 to n:")
+
+# Ask the user to enter n
+n2 = int(input("Enter n: "))
+
+# Convert each generated number to string and join with commas
+print(",".join(str(num) for num in even_numbers(n2)))
+
+
+# This function generates numbers divisible by both 3 and 4
+def divisible_by_3_and_4(n):
+    # Check every number from 0 to n
+    for i in range(n + 1):
+        # If number is divisible by 3 and by 4
+        if i % 3 == 0 and i % 4 == 0:
+            yield i
+
+
+# Print a title
+print("\n3. Numbers divisible by 3 and 4:")
+
+# Ask the user for n
+n3 = int(input("Enter n: "))
+
+# Print each matching number
+for num in divisible_by_3_and_4(n3):
     print(num)
 
 
+# This function generates squares from a to b
+def squares(a, b):
+    # Loop from a to b inclusive
+    for i in range(a, b + 1):
+        yield i * i
 
 
-# 4. Generator Expression
+# Print a title
+print("\n4. Squares from a to b:")
 
-print("\nGenerator Expression (squares):")
-squares = (x * x for x in range(5))
-for square in squares:
-    print(square)
+# Ask for starting number
+a = int(input("Enter a: "))
+
+# Ask for ending number
+b = int(input("Enter b: "))
+
+# Print each square
+for value in squares(a, b):
+    print(value)
+
+
+# This function counts down from n to 0
+def countdown(n):
+    # Repeat while n is not less than 0
+    while n >= 0:
+        yield n
+        n -= 1
+
+
+# Print a title
+print("\n5. Countdown from n to 0:")
+
+# Ask for n
+n5 = int(input("Enter n: "))
+
+# Print all countdown values
+for num in countdown(n5):
+    print(num)

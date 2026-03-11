@@ -1,40 +1,44 @@
+# json.py
+
+# Import the json module
 import json
 
 
-# 1. Convert Python to JSON
-
-data = {
-    "name": "Ali",
-    "age": 17,
-    "subjects": ["Math", "ICT", "Physics"]
-}
-
-json_string = json.dumps(data, indent=4)
-print("Python to JSON:")
-print(json_string)
+# Open the JSON file in read mode
+with open("sample-data.json", "r") as file:
+    # Load JSON data into a Python dictionary
+    data = json.load(file)
 
 
+# Print the table title
+print("Interface Status")
 
-# 2. Convert JSON to Python
+# Print a long line
+print("=" * 90)
 
-parsed_data = json.loads(json_string)
-print("\nJSON to Python:")
-print(parsed_data["name"])
+# Print column headers with spacing
+print(f"{'DN':<60} {'Description':<20} {'Speed':<8} {'MTU':<8}")
 
-
-
-# 3. Write JSON to File
-
-with open("output.json", "w") as file:
-    json.dump(data, file, indent=4)
-
-print("\nData written to output.json")
+# Print a separator line
+print("-" * 90)
 
 
+# Loop through each item inside "imdata"
+for item in data["imdata"]:
+    # Go inside l1PhysIf, then inside attributes
+    attributes = item["l1PhysIf"]["attributes"]
 
-# 4. Read JSON from File
+    # Get the DN value
+    dn = attributes["dn"]
 
-with open("output.json", "r") as file:
-    loaded_data = json.load(file)
+    # Get the description value
+    descr = attributes["descr"]
 
-print("Loaded from file:", loaded_data)
+    # Get the speed value
+    speed = attributes["speed"]
+
+    # Get the MTU value
+    mtu = attributes["mtu"]
+
+    # Print one row of the table
+    print(f"{dn:<60} {descr:<20} {speed:<8} {mtu:<8}")
