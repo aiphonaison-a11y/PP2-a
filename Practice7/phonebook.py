@@ -1,147 +1,116 @@
 import csv
-from connect import connect
-def insert_from_csv(file= 'contacts.csv'):
-    conn = connect()
-    cur = conn.cursor()
-    try:
-        with open(file,newline='',encoding='utf-8') as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                cur.execute(
-                    "INSERT INTO contacts (first_name, last_name, phone) VALUES (%s, %s, %s)",
-                    (row['first_name'], row['last_name'], row['phone'])
+from connect import get_connection
 
-                )
-        conn.commit()
-        print("Contacts succesfully added.")
-    except Exception as e:
-        print("Error:", e)
-    finally:
-        cur.close()
-        conn.close()
-def insert_console():
-    """Insert a contact via console"""
-    first_name = input("First name: ")
-    last_name = input("Last name:")
-    phone = input("Phone:")
-    conn = connect()
+def insert_from_csv(file_path):
+    conn = get_connection()
     cur = conn.cursor()
-    try:
-        cur.execute(
-            "INSERT INTO contacts (first_name, last_name, phone) VALUES (%s, %s, %s)" ,
-            (first_name,last_name,phone)
-        )
-        conn.commit()
-        print("Contact added.")
-    except Exception as e:
-        print("Error:",e)
-    finally:
-        cur.close()
-        conn.close()
+    with open(file_path, newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            cur.execute(
+                "INSERT INTO contacts (first_name, last_name, phone) VALUES (%s, %s, %s)",
+                (row['first_name'], row['last_name'], row['phone'])
+            )
+    conn.commit()
+    cur.close()
+    conn.close()
+    print("CSV data inserted successfully!")
+
+def insert_from_console():
+    first_name = input("Enter first name: ")
+    last_name = input("Enter last name: ")
+    phone = input("Enter phone number: ")
+
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        "INSERT INTO contacts (first_name, last_name, phone) VALUES (%s, %s, %s)",
+        (first_name, last_name, phone)
+    )
+    conn.commit()
+    cur.close()
+    conn.close()
+    print("Contact added successfully!")
+
 def update_contact():
-    """Update a contact's first name or phone number"""
-    contact_id = input("the ID:")
-    first_name = input("New First Name:")
-    phone = input("New Phone:")
+    phone = input("Enter the phone number of the contact to update: ")
+    field = input("Update first_name or phone? ")
+    new_value = input(f"Enter new {field}: ")
 
-    conn = connect()
+    conn = get_connection()
     cur = conn.cursor()
-    try:
-        if first_name:
-            cur.execute("UPDATE contacts SET first_name=%s WHERE id=%s" , (first_name, contact_id))
-        if phone:
-            cur.execute("UPDATE contacts SET phone=%s WHERE id=%s" , (phone, contact_id))
-        conn.commit()
-        print("contact updated.")
-    except Exception as e:
-        print("Error:", e)
-    finally:
-        cur.close()
-        conn.close()
+    cur.execute(f"UPDATE contacts SET {field} = %s WHERE phone = %s", (new_value, phone))
+    conn.commit()
+    cur.close()
+    conn.close()
+    print("Contact updated successfully!")
 
-def search_contacts():
-    """Search contacts by first name or phone prefix"""
-    name = input("Enter name to search:")
-    phone_prefix = input("Enter phone prefix to search:")
-
-    conn = connect()
+def query_contacts():
+    search_type = input("Search by (name/phone_prefix): ").strip().lower()
+    conn = get_connection()
     cur = conn.cursor()
-    try:
-        query = "SELECT * FROM contacts WHERE 1=1"
-        params = []
-        if name:
-            query += " AND first_name ILIKE %s"
-            params.append(f"%{name}%")
-        if phone_prefix:
-            query += " AND phone LIKE %s"
-            params.append(f"{phone_prefix}%")
-        cur.execute(query,params)
-        rows = cur.fetchall()
-        if rows:
-            print("Search results:")
-            for row in rows:
-                print(f"ID: {row[0]}, First Name: {row[1]}, Last Name: {row[2]}, Phone: {row[3]}")
-        else:
-            print("No contacts found.")
-    except Exception as e:
-        print("Error:" , e)
-    finally:
-        cur.close()
-        conn.close()
+
+    if search_type == 'name':
+        name = input("Enter first name to search: ")
+        cur.execute("SELECT first_name, last_name, phone FROM contacts WHERE first_name ILIKE %s", (f"%{name}%",))
+    else:
+        prefix = input("Enter phone prefix to search: ")
+        cur.execute("SELECT first_name, last_name, phone FROM contacts WHERE phone LIKE %s", (f"{prefix}%",))
+
+    results = cur.fetchall()
+    if results:
+        for r in results:
+            print(f"{r[0]} {r[1]}: {r[2]}")
+    else:
+        print("No contacts found.")
+    
+    cur.close()
+    conn.close()
 
 def delete_contact():
-    """Delete a contact by first name or phone"""
-    name = input("Enter the first name")
-    phone = input("Enter the phone of the contact")
-
-    conn = connect()
+    choice = input("Delete by (username/phone): ").strip().lower()
+    conn = get_connection()
     cur = conn.cursor()
-    try:
-        query = "DELETE FROM contacts WHERE 1=1"
-        params = []
-        if name:
-            query += " AND first_name=%s"
-            params.append(name)
-        if phone:
-            query += " AND phone=%s"
-            params.append(phone)
-        cur.execute(query,params)
-        conn.commit()
-        print("Contact(s) deleted.")
-    except Exception as e:
-        print("Error:", e)
-    finally:
-        cur.close()
-        conn.close()
+
+    if choice == 'username':
+        name = input("Enter first name to delete: ")
+        cur.execute("DELETE FROM contacts WHERE first_name = %s", (name,))
+    else:
+        phone = input("Enter phone number to delete: ")
+        cur.execute("DELETE FROM contacts WHERE phone = %s", (phone,))
     
+    conn.commit()
+    cur.close()
+    conn.close()
+    print("Contact deleted successfully!")
+
 def menu():
-    """User menu for the PhoneBook application"""
     while True:
-        print("\n=== PhoneBook Menu ===")
-        print("1. Insert contacts from CSV")
-        print("2. Add contact manually")
+        print("\n--- PhoneBook Menu ---")
+        print("1. Insert from CSV")
+        print("2. Insert from console")
         print("3. Update contact")
-        print("4. Search contacts")
+        print("4. Query contacts")
         print("5. Delete contact")
         print("6. Exit")
-        choice = input("Choose an option (1-6): ")
+
+        choice = input("Choose an option: ")
 
         if choice == '1':
-            insert_from_csv()
+            insert_from_csv('contacts.csv')
         elif choice == '2':
-            insert_console()
+            insert_from_console()
         elif choice == '3':
             update_contact()
         elif choice == '4':
-            search_contacts()
+            query_contacts()
         elif choice == '5':
             delete_contact()
         elif choice == '6':
-            print("Exiting PhoneBook...")
+            print("Goodbye!")
             break
         else:
-            print("Invalid choice, please try again.")
-
+            print("Invalid choice. Try again.")
 
 if __name__ == "__main__":
     menu()
