@@ -99,38 +99,35 @@ def import_csv(csv_file):
 def menu():
     while True:
         print("\n   PhoneBook Menu   ")
-        print("1. Insert contacts from CSV")
-        print("2. Add contact manually")
+        print("1. Add contact manually")
+        print("2. Insert contacts from CSV")
         print("3. Update contact")
-        print("4. Search contacts")
-        print("5. Delete contact")
+        print("4. Delete contact")
+        print("5. Search contacts")
         print("6. Exit")
         choice = input("Choose an option (1-6): ")
 
         if choice == "1":
-            name = input("Имя: ")
-            phone = input("Телефон: ")
+            name = input("Name: ")
+            phone = input("Telephone: ")
             add_contact(name, phone)
         elif choice == "2":
             show_contacts()
         elif choice == "3":
-            name = input("Имя контакта для обновления: ")
-            phone = input("Новый телефон: ")
+            name = input("The name of the contact that needs updating:")
+            phone = input("New telephone: ")
             update_contact(name, phone)
         elif choice == "4":
-            name = input("Имя контакта для удаления: ")
+            name = input("The name of the contact to delete: ")
             delete_contact(name)
         elif choice == "5":
-            name = input("Имя для поиска: ")
+            name = input("Search name: ")
             find_contact(name)
         elif choice == "6":
-            csv_file = input("Путь к CSV файлу: ")
-            import_csv(csv_file)
-        elif choice == "0":
-            print("Выход из программы.")
+            print("Exit from the programme")
             break
         else:
-            print("Неверный выбор, попробуйте снова.")
+            print("Wrong choice, try again.")
 
 if __name__ == "__main__":
     create_table()
