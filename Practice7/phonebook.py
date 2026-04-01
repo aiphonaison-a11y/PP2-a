@@ -117,7 +117,7 @@ def delete_contact():
 def menu():
     """User menu for the PhoneBook application"""
     while True:
-        print("\n=== PhoneBook Menu ===")
+        print("\n   PhoneBook Menu ")
         print("1. Insert contacts from CSV")
         print("2. Add contact manually")
         print("3. Update contact")

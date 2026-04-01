@@ -1,7 +1,10 @@
 import psycopg2
-from config import config
+from config import DB_CONFIG
 
-def connect():
-    params = config()
-    conn = psycopg2.connect(**params)
-    return conn
+def get_connection():
+    return psycopg2.connect(
+        host=DB_CONFIG["host"],
+        database=DB_CONFIG["database"],
+        user=DB_CONFIG["user"],
+        password=DB_CONFIG["password"]
+    )
