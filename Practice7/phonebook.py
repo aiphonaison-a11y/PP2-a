@@ -10,7 +10,7 @@ def get_connection():
         password=DB_CONFIG["password"]
     )
 
-# Создание таблицы
+
 def create_table():
     conn = get_connection()
     cur = conn.cursor()
@@ -26,7 +26,7 @@ def create_table():
     conn.close()
     print("Table 'phonebook' is ready.")
 
-# Добавление контакта
+
 def add_contact(name, phone):
     conn = get_connection()
     cur = conn.cursor()
@@ -40,7 +40,7 @@ def add_contact(name, phone):
     conn.close()
     print(f"Added contact: {name} - {phone}")
 
-# Показ всех контактов
+
 def show_contacts():
     conn = get_connection()
     cur = conn.cursor()
@@ -51,7 +51,7 @@ def show_contacts():
     for row in rows:
         print(row)
 
-# Обновление контакта
+
 def update_contact(name, phone):
     conn = get_connection()
     cur = conn.cursor()
@@ -65,7 +65,7 @@ def update_contact(name, phone):
     conn.close()
     print(f"Updated {name} with new phone: {phone}")
 
-# Удаление контакта
+
 def delete_contact(name):
     conn = get_connection()
     cur = conn.cursor()
@@ -75,7 +75,6 @@ def delete_contact(name):
     conn.close()
     print(f"Deleted contact: {name}")
 
-# Поиск контакта
 def find_contact(name):
     conn = get_connection()
     cur = conn.cursor()
@@ -89,7 +88,6 @@ def find_contact(name):
     else:
         print(f"No contact found with name: {name}")
 
-# Импорт из CSV
 def import_csv(csv_file):
     with open(csv_file, newline='', encoding='utf-8') as f:
         reader = csv.DictReader(f)
@@ -97,17 +95,17 @@ def import_csv(csv_file):
             add_contact(row['name'], row['phone'])
     print(f"Contacts from {csv_file} imported successfully.")
 
-# Меню
+
 def menu():
     while True:
-        print("\n1. Добавить контакт")
-        print("2. Показать все контакты")
-        print("3. Обновить контакт")
-        print("4. Удалить контакт")
-        print("5. Найти контакт")
-        print("6. Импорт из CSV")
-        print("0. Выход")
-        choice = input("Выбор: ")
+        print("\n   PhoneBook Menu   ")
+        print("1. Insert contacts from CSV")
+        print("2. Add contact manually")
+        print("3. Update contact")
+        print("4. Search contacts")
+        print("5. Delete contact")
+        print("6. Exit")
+        choice = input("Choose an option (1-6): ")
 
         if choice == "1":
             name = input("Имя: ")
@@ -134,7 +132,6 @@ def menu():
         else:
             print("Неверный выбор, попробуйте снова.")
 
-# Основной запуск
 if __name__ == "__main__":
     create_table()
     menu()
