@@ -15,10 +15,6 @@ $$;
 
 
 -- Bulk insert with validation
-
-DROP PROCEDURE IF EXISTS bulk_insert_contacts;
-
-
 CREATE OR REPLACE FUNCTION bulk_insert_contacts(
     names TEXT[],
     phones TEXT[]
