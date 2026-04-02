@@ -26,10 +26,13 @@ DECLARE
 BEGIN
     FOR i IN 1..array_length(names, 1) LOOP
         
-        IF phones[i] ~ '^[0-9]{10,15}$' THEN
+        -- Accept phone numbers with 7 to 15 digits
+        IF phones[i] ~ '^[0-9]{7,15}$' THEN
             
             IF EXISTS (SELECT 1 FROM contacts WHERE name = names[i]) THEN
-                UPDATE contacts SET phone = phones[i] WHERE name = names[i];
+                UPDATE contacts 
+                SET phone = phones[i] 
+                WHERE name = names[i];
             ELSE
                 INSERT INTO contacts(name, phone)
                 VALUES (names[i], phones[i]);
@@ -41,10 +44,12 @@ BEGIN
 
     END LOOP;
 
-    RAISE NOTICE 'Invalid data: %', invalid_data;
+    -- Show invalid entries
+    IF array_length(invalid_data, 1) IS NOT NULL THEN
+        RAISE NOTICE 'Invalid data: %', invalid_data;
+    END IF;
 END;
 $$;
-
 
 -- Delete by name or phone
 CREATE OR REPLACE PROCEDURE delete_contact(p_value TEXT)
