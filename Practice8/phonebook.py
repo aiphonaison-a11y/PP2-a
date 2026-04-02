@@ -90,7 +90,6 @@ def bulk_insert():
     else:
         print("All contacts inserted successfully.")
 
-
 def menu():
     while True:
         print("\n--- PhoneBook ---")
