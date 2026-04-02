@@ -72,11 +72,23 @@ def bulk_insert():
     conn = get_connection()
     cur = conn.cursor()
 
-    cur.execute("CALL bulk_insert_contacts(%s, %s)", (names, phones))
-    conn.commit()
+    cur.execute(
+        "SELECT bulk_insert_contacts(%s::TEXT[], %s::TEXT[])",
+        (names, phones)
+    )
 
+    invalid_data = cur.fetchone()[0]
+
+    conn.commit()
     cur.close()
     conn.close()
+
+    if invalid_data:
+        print("Invalid entries:")
+        for item in invalid_data:
+            print(item)
+    else:
+        print("All contacts inserted successfully.")
 
 
 def menu():

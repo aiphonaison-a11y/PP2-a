@@ -15,19 +15,18 @@ $$;
 
 
 -- Bulk insert with validation
-CREATE OR REPLACE PROCEDURE bulk_insert_contacts(
+CREATE OR REPLACE FUNCTION bulk_insert_contacts(
     names TEXT[],
     phones TEXT[]
 )
-LANGUAGE plpgsql AS $$
+RETURNS TEXT[] AS $$
 DECLARE
     i INT;
     invalid_data TEXT[] := ARRAY[]::TEXT[];
 BEGIN
     FOR i IN 1..array_length(names, 1) LOOP
         
-        -- Accept phone numbers with 7 to 15 digits
-        IF phones[i] ~ '^[0-9]{7,15}$' THEN
+        IF phones[i] ~ '^[0-9]{6,15}$' THEN
             
             IF EXISTS (SELECT 1 FROM contacts WHERE name = names[i]) THEN
                 UPDATE contacts 
@@ -44,12 +43,9 @@ BEGIN
 
     END LOOP;
 
-    -- Show invalid entries
-    IF array_length(invalid_data, 1) IS NOT NULL THEN
-        RAISE NOTICE 'Invalid data: %', invalid_data;
-    END IF;
+    RETURN invalid_data;
 END;
-$$;
+$$ LANGUAGE plpgsql;
 
 -- Delete by name or phone
 CREATE OR REPLACE PROCEDURE delete_contact(p_value TEXT)
