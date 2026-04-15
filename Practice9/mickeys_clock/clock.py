@@ -1,30 +1,19 @@
-import pygame
-import math
-import time
+from datetime import datetime
 
-class MickeyClock:
-    def __init__(self, screen, center):
-        self.screen = screen
-        self.center = center
-        self.hand_img = pygame.image.load("images/mickey_hand.png")
-        self.hand_img = pygame.transform.scale(self.hand_img, (50, 150))
+def get_time_angles():
+    now = datetime.now()
 
-    def draw(self):
-        current_time = time.localtime()
-        seconds = current_time.tm_sec
-        minutes = current_time.tm_min
+    seconds = now.second
+    minutes = now.minute
+    hours = now.hour % 12
 
-        # Convert to angles
-        sec_angle = -seconds * 6   # 360/60
-        min_angle = -minutes * 6
 
-        # Rotate images
-        sec_hand = pygame.transform.rotate(self.hand_img, sec_angle)
-        min_hand = pygame.transform.rotate(self.hand_img, min_angle)
+    second_angle = -(seconds * 6)
+    
 
-        # Draw hands
-        sec_rect = sec_hand.get_rect(center=self.center)
-        min_rect = min_hand.get_rect(center=self.center)
+    minute_angle = -(minutes * 6 + seconds * 0.1)
+    
 
-        self.screen.blit(min_hand, min_rect)
-        self.screen.blit(sec_hand, sec_rect)
+    hour_angle   = -(hours * 30 + minutes * 0.5)
+
+    return hour_angle, minute_angle, second_angle
