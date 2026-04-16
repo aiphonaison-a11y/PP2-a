@@ -48,10 +48,8 @@ while running:
     # Draw Background
     screen.blit(clock_bg, (0, 0))
 
-    # Draw the Tail
+    # Draw the Tail & Hands
     blit_rotate_center(screen, tail, CENTER, s_angle)
-
-    # Draw the Hands
     blit_rotate_center(screen, hour_hand, CENTER, h_angle)
     blit_rotate_center(screen, minute_hand, CENTER, m_angle)
 

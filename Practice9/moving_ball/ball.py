@@ -2,16 +2,16 @@ import pygame
  
  
 class Ball:
-    RADIUS = 25          # diameter = 50 px
-    STEP   = 20          # Each key press moves the ball 20 px
-    COLOR  = (220, 40, 40)   # Red ball
-    OUTLINE= (160, 20, 20)   # Darker outline
+    RADIUS = 25          # diameter = 50px
+    STEP   = 20         
+    COLOR  = (220, 40, 40)   # Red 
+    OUTLINE= (160, 20, 20)   # Outline
  
     def __init__(self, screen_width: int, screen_height: int):
         self.screen_w = screen_width
         self.screen_h = screen_height
  
-        # Start the ball at the center of the screen
+        # Center 
         self.x = screen_width  // 2
         self.y = screen_height // 2
  
@@ -21,7 +21,7 @@ class Ball:
         new_x = self.x + dx
         new_y = self.y + dy
  
-        # Clamp
+        # Boundary
         if self.RADIUS <= new_x <= self.screen_w - self.RADIUS:
             self.x = new_x
         if self.RADIUS <= new_y <= self.screen_h - self.RADIUS:
@@ -42,7 +42,7 @@ class Ball:
         shadow_center = (center[0] + 3, center[1] + 3)
         pygame.draw.circle(surface, (200, 200, 200), shadow_center, self.RADIUS)
  
-        # Main ball
+        # Ball
         pygame.draw.circle(surface, self.COLOR, center, self.RADIUS)
  
         # Outline
