@@ -5,7 +5,7 @@ import colorsys
 # SETTINGS
 # -------------------------
 WIDTH, HEIGHT = 900, 650
-TOOLBAR_HEIGHT = 160   # FIXED SIZE
+TOOLBAR_HEIGHT = 150
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -63,6 +63,54 @@ def draw_brush(surface, color, start, end, radius):
 
 
 # -------------------------
+# SHAPES
+# -------------------------
+def draw_square(surface, color, start, end, width=2):
+    size = min(abs(end[0]-start[0]), abs(end[1]-start[1]))
+    pygame.draw.rect(surface, color,
+                     pygame.Rect(start[0], start[1], size, size), width)
+
+
+def draw_right_triangle(surface, color, start, end, width=2):
+    x1, y1 = start
+    x2, y2 = end
+    pygame.draw.polygon(surface, color, [(x1, y1), (x1, y2), (x2, y2)], width)
+
+
+def draw_equilateral_triangle(surface, color, start, end, width=2):
+    x1, y1 = start
+    x2, y2 = end
+
+    base = x2 - x1
+    height = abs(base) * 0.866
+
+    points = [
+        (x1, y2),
+        (x2, y2),
+        (x1 + base / 2, y2 - height)
+    ]
+
+    pygame.draw.polygon(surface, color, points, width)
+
+
+def draw_rhombus(surface, color, start, end, width=2):
+    x1, y1 = start
+    x2, y2 = end
+
+    mx = (x1 + x2) // 2
+    my = (y1 + y2) // 2
+
+    points = [
+        (mx, y1),
+        (x2, my),
+        (mx, y2),
+        (x1, my)
+    ]
+
+    pygame.draw.polygon(surface, color, points, width)
+
+
+# -------------------------
 # TOOLBAR
 # -------------------------
 def draw_toolbar(screen, current_tool, current_color, brush_size,
@@ -71,14 +119,23 @@ def draw_toolbar(screen, current_tool, current_color, brush_size,
     pygame.draw.rect(screen, GRAY, (0, 0, WIDTH, TOOLBAR_HEIGHT))
     pygame.draw.line(screen, BLACK, (0, TOOLBAR_HEIGHT), (WIDTH, TOOLBAR_HEIGHT), 2)
 
-    # Tools
-    tools = ["brush", "rectangle", "circle", "eraser", "clear"]
+    # ---------------- TOOL GRID ----------------
+    tools = ["brush", "rectangle", "circle", "eraser",
+             "square", "r_triangle", "eq_triangle", "rhombus", "clear"]
+
     tool_buttons = {}
 
-    btn_w, btn_h = 110, 28
+    btn_w, btn_h = 95, 28
+    cols = 5
 
     for i, tool in enumerate(tools):
-        rect = pygame.Rect(10 + i*(btn_w+8), 10, btn_w, btn_h)
+        row = i // cols
+        col = i % cols
+
+        x = 10 + col * (btn_w + 8)
+        y = 10 + row * (btn_h + 6)
+
+        rect = pygame.Rect(x, y, btn_w, btn_h)
         tool_buttons[tool] = rect
 
         pygame.draw.rect(screen,
@@ -86,12 +143,12 @@ def draw_toolbar(screen, current_tool, current_color, brush_size,
                          rect)
         pygame.draw.rect(screen, BLACK, rect, 2)
 
-        draw_text(screen, tool.capitalize(), rect.x+8, rect.y+5, font,
+        draw_text(screen, tool[:9], x + 5, y + 5, font,
                   WHITE if current_tool == tool else BLACK)
 
-    # Colors
+    # ---------------- COLOR PRESETS ----------------
     color_buttons = []
-    x, y = 10, 55
+    x, y = 10, 85
 
     for color in COLOR_OPTIONS:
         rect = pygame.Rect(x, y, 32, 22)
@@ -102,15 +159,23 @@ def draw_toolbar(screen, current_tool, current_color, brush_size,
 
         x += 38
 
-    # Palette
+    # ---------------- HSV PALETTE ----------------
     screen.blit(palette, palette_rect.topleft)
     pygame.draw.rect(screen, BLACK, palette_rect, 2)
 
-    # Preview + status
-    pygame.draw.rect(screen, current_color, (WIDTH-70, 15, 45, 45))
-    pygame.draw.rect(screen, BLACK, (WIDTH-70, 15, 45, 45), 2)
+    # ---------------- STATUS AREA (FIXED) ----------------
+    preview_rect = pygame.Rect(WIDTH - 70, 15, 45, 45)
+    pygame.draw.rect(screen, current_color, preview_rect)
+    pygame.draw.rect(screen, BLACK, preview_rect, 2)
 
-    draw_text(screen, f"Tool: {current_tool}", WIDTH-220, 95, font)
-    draw_text(screen, f"Size: {brush_size}", WIDTH-220, 115, font)
+    status_x = WIDTH - 220
+    status_y = 95
+
+    status_bg = pygame.Rect(status_x - 10, status_y - 5, 200, 45)
+    pygame.draw.rect(screen, WHITE, status_bg)
+    pygame.draw.rect(screen, BLACK, status_bg, 1)
+
+    draw_text(screen, f"Tool: {current_tool}", status_x, status_y, font)
+    draw_text(screen, f"Size: {brush_size}", status_x, status_y + 18, font)
 
     return tool_buttons, color_buttons
