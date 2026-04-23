@@ -1,6 +1,5 @@
 import pygame
 import random
-import os
 
 WIDTH = 360
 HEIGHT = 640
@@ -44,49 +43,69 @@ def reset_game():
         "enemy_speed": 4,
         "coin_x": cx,
         "coin_y": cy,
-        "score": 0,
-        "coins": 0
+        "coins": 0,
+        "avoided": 0
     }
 
 
 def update(state, keys, coin_sound, crash_sound):
     game_over = False
 
-    # player movement
+    # PLAYER
     if keys[pygame.K_LEFT] and state["player_x"] > 0:
         state["player_x"] -= player_speed
 
     if keys[pygame.K_RIGHT] and state["player_x"] < WIDTH - player_w:
         state["player_x"] += player_speed
 
-    # enemy
+    # ENEMY
     state["enemy_y"] += state["enemy_speed"]
+
+    enemy_rect = pygame.Rect(
+        state["enemy_x"],
+        state["enemy_y"],
+        enemy_w,
+        enemy_h
+    )
 
     if state["enemy_y"] > HEIGHT:
         state["enemy_y"] = -150
         state["enemy_x"] = random.randint(0, WIDTH - enemy_w)
-        state["score"] += 1
+
         state["enemy_speed"] += 0.15
+        state["avoided"] += 1
 
-    enemy_rect = pygame.Rect(state["enemy_x"], state["enemy_y"], enemy_w, enemy_h)
-
-    # coin
+    # COIN MOVEMENT
     state["coin_y"] += coin_speed
+
     if state["coin_y"] > HEIGHT:
         state["coin_x"], state["coin_y"] = spawn_coin(enemy_rect)
 
-    player_rect = pygame.Rect(state["player_x"], state["player_y"], player_w, player_h)
-    coin_rect = pygame.Rect(state["coin_x"], state["coin_y"], coin_size, coin_size)
+    player_rect = pygame.Rect(
+        state["player_x"],
+        state["player_y"],
+        player_w,
+        player_h
+    )
 
-    # crash
+    coin_rect = pygame.Rect(
+        state["coin_x"],
+        state["coin_y"],
+        coin_size,
+        coin_size
+    )
+
+    # CRASH
     if player_rect.colliderect(enemy_rect):
-        crash_sound.play()
+        if crash_sound:
+            crash_sound.play()
         game_over = True
 
-    # coin collect
+    # COIN COLLECT
     if player_rect.colliderect(coin_rect):
         state["coins"] += 1
-        coin_sound.play()
+        if coin_sound:
+            coin_sound.play()
         state["coin_x"], state["coin_y"] = spawn_coin(enemy_rect)
 
     return state, game_over
@@ -98,17 +117,31 @@ def draw(screen, state, assets, fonts, game_over):
 
     screen.fill(GREEN)
 
+    # ROAD
     pygame.draw.rect(screen, ROAD_GRAY, (80, 0, 200, HEIGHT))
     pygame.draw.line(screen, LINE_WHITE, (140, 0), (140, HEIGHT), 3)
     pygame.draw.line(screen, LINE_WHITE, (220, 0), (220, HEIGHT), 3)
 
+    # SPRITES
     screen.blit(player_img, (state["player_x"], state["player_y"]))
     screen.blit(enemy_img, (state["enemy_x"], state["enemy_y"]))
     screen.blit(coin_img, (state["coin_x"], state["coin_y"]))
 
-    screen.blit(font.render(f"Score: {state['score']}", True, BLACK), (10, 10))
-    screen.blit(font.render(f"Coins: {state['coins']}", True, BLACK), (10, 40))
+    # -------------------------
+    # UI LEFT (label / stat)
+    # -------------------------
+    screen.blit(font.render("Stats", True, WHITE), (10, 5))
 
+    avoided_text = font.render(f"Avoided: {state['avoided']}", True, YELLOW)
+    screen.blit(avoided_text, (10, 30))
+
+    # -------------------------
+    # UI RIGHT (COINS)
+    # -------------------------
+    coin_text = font.render(f"Coins: {state['coins']}", True, YELLOW)
+    screen.blit(coin_text, (WIDTH - 130, 10))
+
+    # GAME OVER
     if game_over:
         overlay = pygame.Surface((WIDTH, HEIGHT))
         overlay.set_alpha(120)

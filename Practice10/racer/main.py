@@ -3,47 +3,69 @@ import sys
 import os
 from race import *
 
+# ----------------------------
+# INIT
+# ----------------------------
 pygame.init()
+pygame.mixer.init()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# -----------------------------------------
+print("Running from:", BASE_DIR)
+
+# ----------------------------
 # WINDOW
-# -----------------------------------------
+# ----------------------------
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Car Dodge Game")
+pygame.display.set_caption("Car Dodge Game - Practice10")
 
 clock = pygame.time.Clock()
 FPS = 60
 
-# -----------------------------------------
+# ----------------------------
 # FONTS
-# -----------------------------------------
+# ----------------------------
 font = pygame.font.SysFont("Arial", 24)
 big_font = pygame.font.SysFont("Arial", 40)
 
-# -----------------------------------------
-# AUDIO (THIS IS WHERE IT BELONGS)
-# -----------------------------------------
-pygame.mixer.music.load(
-    os.path.join(BASE_DIR, "sounds", "background_music.mp3")
-)
-pygame.mixer.music.set_volume(0.15)
-pygame.mixer.music.play(-1)
+# ----------------------------
+# AUDIO SAFE LOADER
+# ----------------------------
+def load_music():
+    music_path = os.path.join(BASE_DIR, "sounds", "background_music.mp3")
 
-coin_sound = pygame.mixer.Sound(
-    os.path.join(BASE_DIR, "sounds", "coin_sound.mp3")
-)
-coin_sound.set_volume(0.9)
+    print("Music path:", music_path)
+    print("Exists:", os.path.exists(music_path))
 
-crash_sound = pygame.mixer.Sound(
-    os.path.join(BASE_DIR, "sounds", "crash_sound.mp3")
-)
-crash_sound.set_volume(1.0)
+    if not os.path.exists(music_path):
+        raise FileNotFoundError(f"Missing background music: {music_path}")
 
-# -----------------------------------------
+    pygame.mixer.music.load(music_path)
+    pygame.mixer.music.set_volume(0.15)
+    pygame.mixer.music.play(-1)
+
+def load_sound(path, volume):
+    if os.path.exists(path):
+        s = pygame.mixer.Sound(path)
+        s.set_volume(volume)
+        return s
+    print("Missing sound:", path)
+    return None
+
+# start music
+load_music()
+
+coin_sound = load_sound(
+    os.path.join(BASE_DIR, "sounds", "coin_sound.mp3"), 0.9
+)
+
+crash_sound = load_sound(
+    os.path.join(BASE_DIR, "sounds", "crash_sound.mp3"), 1.0
+)
+
+# ----------------------------
 # ASSETS
-# -----------------------------------------
+# ----------------------------
 player_img = pygame.transform.scale(
     pygame.image.load(os.path.join(BASE_DIR, "images", "player_car.png")),
     (player_w, player_h)
@@ -59,15 +81,15 @@ coin_img = pygame.transform.scale(
     (coin_size, coin_size)
 )
 
-# -----------------------------------------
+# ----------------------------
 # STATE
-# -----------------------------------------
+# ----------------------------
 state = reset_game()
 game_over = False
 
-# -----------------------------------------
-# LOOP
-# -----------------------------------------
+# ----------------------------
+# GAME LOOP
+# ----------------------------
 running = True
 
 while running:

@@ -9,6 +9,7 @@ CELL = 10
 WIDTH = 400
 HEIGHT = 400
 
+
 class Snake:
     def __init__(self):
         self.snake = [(200, 200), (210, 200), (220, 200)]
@@ -21,22 +22,22 @@ class Snake:
         self.head.fill((200, 200, 200))
 
     def move(self, grow=False, shrink=False):
-        head_x, head_y = self.snake[-1]
+        x, y = self.snake[-1]
 
         if self.direction == RIGHT:
-            new_head = (head_x + CELL, head_y)
+            new_head = (x + CELL, y)
         elif self.direction == LEFT:
-            new_head = (head_x - CELL, head_y)
+            new_head = (x - CELL, y)
         elif self.direction == UP:
-            new_head = (head_x, head_y - CELL)
-        elif self.direction == DOWN:
-            new_head = (head_x, head_y + CELL)
+            new_head = (x, y - CELL)
+        else:
+            new_head = (x, y + CELL)
 
-        # Wall collision
+        # wall collision
         if not (0 <= new_head[0] < WIDTH and 0 <= new_head[1] < HEIGHT):
             return False
 
-        # Self collision
+        # self collision
         if new_head in self.snake:
             return False
 

@@ -9,6 +9,23 @@ class RaceGame:
         self.WIDTH, self.HEIGHT = screen.get_size()
 
         # -------------------
+        # SAFE BASE PATH (IMPORTANT FIX)
+        # -------------------
+        self.BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+        def load_image(path, size):
+            full_path = os.path.join(self.BASE_DIR, path)
+            if not os.path.exists(full_path):
+                raise FileNotFoundError(f"Missing image: {full_path}")
+            return pygame.transform.scale(pygame.image.load(full_path), size)
+
+        def load_sound(path):
+            full_path = os.path.join(self.BASE_DIR, path)
+            if not os.path.exists(full_path):
+                raise FileNotFoundError(f"Missing sound: {full_path}")
+            return pygame.mixer.Sound(full_path)
+
+        # -------------------
         # COLORS
         # -------------------
         self.GREEN = (34, 139, 34)
@@ -25,42 +42,26 @@ class RaceGame:
         self.big_font = pygame.font.SysFont("Arial", 40)
 
         # -------------------
-        # PATH
-        # -------------------
-        self.BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-        # -------------------
-        # ASSETS
+        # ASSETS (SAFE LOADING)
         # -------------------
         self.player_w, self.player_h = 70, 120
         self.enemy_w, self.enemy_h = 70, 120
         self.coin_size = 30
 
-        self.player_img = pygame.transform.scale(
-            pygame.image.load(os.path.join(self.BASE_DIR, "images", "player_car.png")),
-            (self.player_w, self.player_h)
-        )
-
-        self.enemy_img = pygame.transform.scale(
-            pygame.image.load(os.path.join(self.BASE_DIR, "images", "enemy_car.png")),
-            (self.enemy_w, self.enemy_h)
-        )
-
-        self.coin_img = pygame.transform.scale(
-            pygame.image.load(os.path.join(self.BASE_DIR, "images", "coin.png")),
-            (self.coin_size, self.coin_size)
-        )
+        self.player_img = load_image("images/player_car.png", (self.player_w, self.player_h))
+        self.enemy_img = load_image("images/enemy_car.png", (self.enemy_w, self.enemy_h))
+        self.coin_img = load_image("images/coin.png", (self.coin_size, self.coin_size))
 
         # -------------------
-        # AUDIO
+        # AUDIO (SAFE LOADING)
         # -------------------
-        pygame.mixer.music.load(os.path.join(self.BASE_DIR, "sounds", "background_music.mp3"))
+        pygame.mixer.music.load(os.path.join(self.BASE_DIR, "sounds/background_music.mp3"))
         pygame.mixer.music.set_volume(0.15)
         pygame.mixer.music.play(-1)
 
-        self.coin_sound = pygame.mixer.Sound(os.path.join(self.BASE_DIR, "sounds", "coin_sound.mp3"))
-        self.crash_sound = pygame.mixer.Sound(os.path.join(self.BASE_DIR, "sounds", "crash_sound.mp3"))
-        self.speed_sound = pygame.mixer.Sound(os.path.join(self.BASE_DIR, "sounds", "speed_sound.mp3"))
+        self.coin_sound = load_sound("sounds/coin_sound.mp3")
+        self.crash_sound = load_sound("sounds/crash_sound.mp3")
+        self.speed_sound = load_sound("sounds/speed_sound.mp3")
 
         self.coin_sound.set_volume(0.9)
         self.crash_sound.set_volume(1.0)
@@ -76,10 +77,8 @@ class RaceGame:
         self.enemy_speed = self.enemy_speed_base
         self.speed_increment = 0.15
 
-        # 🎯 N coins threshold
+        # N coins rule
         self.coin_boost_threshold = 5
-
-        # prevents sound spam
         self.last_coin_milestone = 0
 
         self.game_over = False
@@ -104,11 +103,10 @@ class RaceGame:
         self.score = 0
         self.coins = 0
         self.game_over = False
-
         self.last_coin_milestone = 0
 
     # -------------------
-    # COIN SPAWN
+    # SPAWN COIN
     # -------------------
     def spawn_coin(self, enemy_rect):
         while True:
@@ -137,7 +135,6 @@ class RaceGame:
         if self.game_over:
             return
 
-        # enemy movement
         self.enemy_y += self.enemy_speed
 
         if self.enemy_y > self.HEIGHT:
@@ -149,7 +146,6 @@ class RaceGame:
 
         enemy_rect = pygame.Rect(self.enemy_x, self.enemy_y, self.enemy_w, self.enemy_h)
 
-        # coin movement
         self.coin_y += self.coin_speed
 
         if self.coin_y > self.HEIGHT:
@@ -169,7 +165,7 @@ class RaceGame:
             self.coin_sound.play()
             self.coin_x, self.coin_y = self.spawn_coin(enemy_rect)
 
-        # 🎯 COIN-BASED SPEED BOOST (FIXED)
+        # SPEED BOOST (FIXED + STABLE)
         if self.coins != 0 and self.coins % self.coin_boost_threshold == 0:
             if self.coins != self.last_coin_milestone:
                 self.enemy_speed += 0.25
@@ -202,12 +198,7 @@ class RaceGame:
             self.screen.blit(self.big_font.render("GAME OVER", True, self.YELLOW), (70, 180))
             self.screen.blit(self.font.render(f"Score: {self.score}", True, self.WHITE), (120, 260))
             self.screen.blit(self.font.render(f"Coins: {self.coins}", True, self.WHITE), (120, 300))
-            self.screen.blit(self.font.render("R = Restart", True, self.YELLOW), (120, 380))
-            self.screen.blit(self.font.render("Q = Quit", True, self.YELLOW), (130, 420))
 
-    # -------------------
-    # EVENTS
-    # -------------------
     def handle_events(self, event):
         if self.game_over and event.type == pygame.KEYDOWN:
             if event.key == pygame.K_r:
