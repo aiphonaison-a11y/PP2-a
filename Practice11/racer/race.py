@@ -70,7 +70,7 @@ class RaceGame:
         # -------------------
         # GAME SETTINGS
         # -------------------
-        self.player_speed = 6
+        self.player_speed = 10
         self.coin_speed = 5
 
         self.enemy_speed_base = 4
@@ -186,8 +186,8 @@ class RaceGame:
         self.screen.blit(self.enemy_img, (self.enemy_x, self.enemy_y))
         self.screen.blit(self.coin_img, (self.coin_x, self.coin_y))
 
-        self.screen.blit(self.font.render(f"Score: {self.score}", True, self.BLACK), (10, 10))
-        self.screen.blit(self.font.render(f"Coins: {self.coins}", True, self.BLACK), (10, 40))
+        self.screen.blit(self.font.render(f"Avoided: {self.score}", True, self.YELLOW), (10, 10))
+        self.screen.blit(self.font.render(f"Coins: {self.coins}", True, self.YELLOW), (10, 40))
 
         if self.game_over:
             overlay = pygame.Surface((self.WIDTH, self.HEIGHT))

@@ -10,7 +10,7 @@ pygame.mixer.set_num_channels(8)
 
 WIDTH, HEIGHT = 360, 640
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Car Dodge Game")
+pygame.display.set_caption("Racer 2.0")
 
 clock = pygame.time.Clock()
 FPS = 60
