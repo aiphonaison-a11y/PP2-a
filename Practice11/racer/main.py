@@ -2,7 +2,6 @@ import pygame
 import sys
 from race import RaceGame
 
-# Initialize audio before pygame
 pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.init()
 pygame.mixer.init()

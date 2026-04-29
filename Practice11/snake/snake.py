@@ -9,6 +9,7 @@ CELL = 10
 WIDTH = 400
 HEIGHT = 400
 
+
 class Snake:
     def __init__(self):
         self.snake = [(200, 200), (210, 200), (220, 200)]
