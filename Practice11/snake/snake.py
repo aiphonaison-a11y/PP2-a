@@ -6,13 +6,13 @@ LEFT = 2
 RIGHT = 3
 
 CELL = 10
-WIDTH = 400
-HEIGHT = 400
+WIDTH = 600
+HEIGHT = 600
 
 
 class Snake:
     def __init__(self):
-        self.snake = [(200, 200), (210, 200), (220, 200)]
+        self.snake = [(300, 300), (310, 300), (320, 300)]
         self.direction = RIGHT
 
         self.skin = pygame.Surface((CELL, CELL))
@@ -33,11 +33,11 @@ class Snake:
         elif self.direction == DOWN:
             new_head = (head_x, head_y + CELL)
 
-        # Wall collision
+        # wall collision
         if not (0 <= new_head[0] < WIDTH and 0 <= new_head[1] < HEIGHT):
             return False
 
-        # Self collision
+        # self collision
         if new_head in self.snake:
             return False
 
@@ -46,6 +46,7 @@ class Snake:
         if not grow:
             self.snake.pop(0)
 
+        # poison shrink one extra block
         if shrink and len(self.snake) > 1:
             self.snake.pop(0)
 
