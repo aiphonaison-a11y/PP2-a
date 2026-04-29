@@ -9,7 +9,7 @@ WIDTH, HEIGHT = 400, 400
 CELL = 10
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Snake (now with consequences)")
+pygame.display.set_caption("Snake 2.0")
 clock = pygame.time.Clock()
 
 # Colors

@@ -5,7 +5,7 @@ def main():
     pygame.init()
 
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    pygame.display.set_caption("Paint App - Clean Layout Edition")
+    pygame.display.set_caption("Paint App 2.0")
     clock = pygame.time.Clock()
 
     font = pygame.font.SysFont("Arial", 18)
