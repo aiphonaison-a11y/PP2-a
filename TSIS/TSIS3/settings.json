@@ -1,5 +1,6 @@
 {
-  "sound": true,
-  "car_color": "red",
-  "difficulty": "normal"
+    "sound": true,
+    "difficulty": "easy",
+    "username": "Player",
+    "car_skin": "red"
 }

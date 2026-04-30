@@ -1,1 +1,17 @@
-[]
+[
+    {
+        "name": "dfa",
+        "score": 1827,
+        "distance": 13173
+    },
+    {
+        "name": "dfa",
+        "score": 416,
+        "distance": 3262
+    },
+    {
+        "name": "dfa",
+        "score": 143,
+        "distance": 1435
+    }
+]
